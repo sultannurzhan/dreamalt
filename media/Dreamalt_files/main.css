@@ -1,0 +1,99 @@
+.navbar-brand img{
+    width: 100%;
+}
+
+.link-text-own{
+    color: #4A7CBF;
+}
+
+
+.navbar-brand{
+    width: 10%;
+    height: 10%;
+    margin-left: 10%;
+}
+
+.feedcontainer{
+    border: 1px solid #DDDDDD; 
+    border-radius: 1%; 
+    padding: 2%;
+}
+
+.aboutcontainer{
+    border: 1px solid #EFF3F4; 
+    border-radius: 1%; 
+    padding: 5%;
+    background-color: #EFF3F4;
+}
+
+.bg-own{
+    background-color: #EFF3F4;
+}
+
+.bg-white{
+    background-color: #FFFFFF;
+}
+
+.bg-own-dark{
+    background-color: #4A7CBF !important;
+}
+
+.bg-own-none{
+    border: 1px solid #DDDDDD !important;
+}
+
+.border-own{
+    border-radius: 1% !important;
+}
+
+
+.profile-container{
+    border: 1px solid #DDDDDD; 
+    border-radius: 1%; 
+    padding-bottom: 1%;
+}
+
+
+.profile-about-count{
+    display: flex;
+}
+
+.profile-about-count a{
+    color: black;
+    margin-right: 5%;
+}
+
+.profile-about-count a:hover{
+    color:green;
+}
+
+
+.mybutton {
+    background-color: none;
+    border: none;
+    color: black;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 4px 2px;
+    cursor: pointer;
+  }
+
+
+
+  .navbar-brand {
+    padding: 0px;
+  }
+  .navbar-brand>img {
+    height: 100%;
+    padding: 15px;
+    width: auto;
+  }
+
+
+.title-family-1{
+    font-family: 'Roboto', sans-serif;
+}
