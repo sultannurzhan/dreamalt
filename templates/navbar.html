@@ -1,0 +1,123 @@
+{% load static %}
+
+
+
+<nav class="navbar navbar-expand-sm navbar-dark bg-own-dark fixed-top shadow">
+    
+    <div class="container ms-lg-3 ms-0" id="navbarTogglerDemo03">
+        
+        <a href="/" class="navbar-brand" id="logo">
+           <img src="{% static 'images/dreamalt-logo.png' %}" style="height:50px; width: 130px;">
+        </a>
+
+        <button 
+        class="navbar-toggler" 
+        type="button" 
+        data-bs-toggle="collapse" 
+        data-bs-target="#navmenu"
+        >
+        <span class="navbar-toggler-icon"></span>
+        </button>
+
+
+        <div class="collapse navbar-collapse ms-4" id="navmenu">
+            <ul class="navbar-nav me-auto ms-lg-5">
+
+                <li class="nav-item ms-lg-3">
+                    <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %} mt-lg-2">                      
+                        Home
+                    </a>
+                </li>
+
+                
+                {% if request.user.is_authenticated %}
+                <li class="nav-item ms-lg-2">
+                    <a href="{% url 'following-news' %}" class="nav-link {% if request.resolver_match.url_name == 'following-news' %}active{% endif %} mt-lg-2">News</a>
+                </li>
+
+                <li class="nav-item ms-lg-2 d-block d-sm-none">
+                    <a href="{% url 'chat-page' %}" class="nav-link {% if request.resolver_match.url_name == 'chat-page' %}active{% endif %} mt-lg-2">Messages</a>
+                </li>
+                {% endif %}
+
+                <li class="nav-item ms-lg-2">
+                    <a href="{% url 'group-page' %}" class="nav-link {% if request.resolver_match.url_name == 'group-page' %}active{% endif %} mt-lg-2">Groups</a>
+                </li>
+
+                <li class="nav-item ms-lg-4">
+                    <form class="d-none d-md-block mt-lg-2">
+                        <form method="GET" action="{% url 'home' %}">
+                            <input type="text" name="q" placeholder="Search Dreamalt" autocomplete="off" class="form-control me-5"/>
+                        </form>
+                    </form>  
+                </li>
+                
+            
+                {% if request.user.is_authenticated %}
+
+                <li class="nav-item ms-lg-2 d-block d-sm-none">
+                    <a href="{% url 'user-profile' request.user.id %}" class="nav-link {% if request.resolver_match.url_name == 'user-profile' %}active{% endif %} mt-lg-2">Profile</a>
+                </li>
+
+                <li class="nav-item ms-lg-2 d-block d-sm-none">
+                    <a href="{% url 'logout' %}" class="nav-link">Logout</a>
+                </li>
+
+                <li class="nav-item ms-lg-5">
+                    <a href="{% url 'create-group' %}" class="btn btn-outline-light {% if request.resolver_match.url_name == 'create-group' %}active{% endif %} ms-lg-3 mb-lg-0 mb-2" style="margin-top: 9px;">Create Group</a>
+                </li>
+
+                <li class="nav-item ms-lg-3 d-sm-block d-none" style="margin-top: -5px;">
+                    <details class="dropdown">
+                        <summary role="button">
+                            <img src="{{request.user.profile.profile_pic.url}}" class="button img-fluid rounded-circle ms-lg-1 hover-shadow" style="height:40px; width:40px; margin-top:12px">
+                        </summary>
+                        <ul class="shadow">
+                            <li class="border-bottom"><a href="{% url 'user-profile' request.user.id %}" class="{% if request.resolver_match.url_name == 'user-profile' and request.user == user %}active{% endif %}">
+                                    <img src="{{request.user.profile.profile_pic.url}}" class="img-fluid shadow rounded-circle" style="height:40px; width:40px;">
+                                    <h5 class="mt-2">{{request.user.get_full_name}}</h5>
+                                </a>
+                            </li>
+                           
+                            <li class="">
+                                <a href="{% url 'chat-page' %}" class="{% if request.resolver_match.url_name == 'chat-page' and request.user == user %}active{% endif %}">Messages</a>
+                            </li>
+                            <li class="">
+                                <a href="{% url 'update-user' %}" class="{% if request.resolver_match.url_name == 'chat-page' and request.user == user %}active{% endif %}">Edit Profile</a>
+                            </li>
+                            <li><a href="{% url 'logout' %}" class="">Logout</a></li>
+                        </ul>
+                    </details>
+                </li>
+
+                {% else %}
+
+                <li class="nav-item d-none d-md-block" style="width: 100px">
+                    <!--invisible block to help to move login and register to the right side of the navbar-->
+                </li>
+                
+
+                <li class="nav-item ms-lg-5">
+                    <a href="{% url 'login' %}" class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %} mt-lg-2">Login</a> 
+                </li>
+
+                <li class="nav-item ms-lg-2">
+                    <a href="{% url 'register' %}" class="nav-link {% if request.resolver_match.url_name == 'register' %}active{% endif %} mt-lg-2">Register</a> 
+                </li>
+
+                {% endif %}
+
+
+                
+            </ul>
+
+
+        </div> 
+
+
+
+    </div>
+
+
+</nav>
+
