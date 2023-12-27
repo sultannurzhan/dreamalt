@@ -1,0 +1,42 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load time_since %}
+{% block content %}
+
+<section class="h-100 gradient-custom-2">
+    <div class="container px-0 py-lg-3 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col col-lg-9 col-xl-7">
+          <div class="card shadow bg-white">
+              <div class="p-4">
+                <h3 class="p-4 text-center fw-bold">About Dreamalt</h3>
+                <div class="d-flex justify-content-center">
+                    
+                    <img class="mt-3" src="{% static 'images/dreamalt-logo-full.png' %}" style="height: 300px; width: 300px;">
+                </div>
+              </div>
+              <div class="p-4">
+                  <p>
+                    Welcome to Dreamalt, a new social media platform founded in December 2022 by <a class="text-decoration-none text-own-dark" href="https://sultanti.web.app" target="_blank">Takibay Sultan</a>. Dreamalt is a unique and innovative social media website that provides users with an engaging and interactive experience.
+                  </p>
+                  <p>
+                    Our platform is designed to allow users to connect with friends, family, and like-minded individuals from all over the world. We have taken a fresh approach to design and functionality to ensure that our users have the best experience possible.
+                  </p>
+                  <p>
+                    Our mission is to create a safe and inclusive space for people to share their thoughts, ideas, and experiences. We believe that social media should be a positive force in people's lives, and we are committed to building a community that is respectful, supportive, and uplifting.
+                  </p>
+                  <p>
+                    At Dreamalt, you can share your ideas, join groups, create events, and participate in lively discussions. Our platform is equipped with advanced features that make it easy for users to connect with others and share their interests.
+                  </p>
+                  <p>
+                    We are excited to welcome you to Dreamalt and look forward to creating a vibrant and supportive community. Join us today and discover a new world of social media!
+                </p>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
+
+
+{% endblock content %}

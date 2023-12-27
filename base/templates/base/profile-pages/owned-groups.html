@@ -1,0 +1,227 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load time_since %}
+{% block content %}
+
+
+
+<style>
+  .link-button{
+      background: none!important;
+      border: none;
+      padding: 0!important;
+      /*optional*/
+      /*input has OS specific font-family*/
+      color: #212529;
+      text-decoration: none;
+      cursor: pointer;
+  }
+
+  #imageDisplay{
+        height: 350px;
+        overflow: auto;
+  }
+
+
+  .user-name{
+    margin-top: 130px;
+  }
+
+  @media (max-width: 979px) {
+    .user-name{
+      margin-top: 110px;
+    }
+  }
+</style>
+
+
+<div class="container py-lg-3">
+  <div class="row">
+
+    <div class="col-sm-2">
+    </div>
+
+    <div class="col align-items-center px-0">
+      <div class="shadow">
+
+        <!--Header-->
+        <div>
+          <div class="link-hover-black  text-white d-flex flex-row" style="height:200px;">
+            <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
+              <button type="button" class="link-button" data-bs-toggle="modal" data-bs-target="#ImageModal">
+              <img src="{%if user.profile.profile_pic%}{{user.profile.profile_pic.url}}{%endif%}"
+                alt="Profile picture" class="img-fluid img-thumbnail mt-4 mb-2"
+                style="width: 150px; z-index: 1; height: 150px">
+              </button>
+                
+                <div class="d-flex justify-content-between align-items-center">
+                {% if request.user.is_authenticated %}
+                {% if request.user == user %}
+                <div class="">
+                  <a type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark"
+                    style="z-index: 1;" href="{% url 'update-user' %}">
+                    Edit profile
+                  </a>
+                </div>
+                {%else%}
+                    {% if ifollowed == False %}
+                    <div class="">
+                        <form action="" method=POST>
+                          {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-dark" data-mdb-ripple-color="dark" style="z-index: 1;">
+                              Follow
+                            </button>
+                        </form>
+                    </div>
+                    {% elif ifollowed == True %}
+                    <div class="">
+                      <form action="" method=POST>
+                        {% csrf_token %}
+                          <button type="submit" class="btn btn-outline-dark" data-mdb-ripple-color="dark" style="z-index: 1;">
+                            Unfollow
+                          </button>
+                      </form>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="">
+                      <a class="btn btn-primary bg-own-dark ms-2" href="{% url 'chat-user' user.id %}">Message</a>
+                    </div>
+                {% endif %}
+                {% endif %}
+
+                </div>
+            </div>
+            
+            <div class="ms-3 user-name">
+              <a href="{%url 'user-profile' user.id %}" class="text-decoration-none text-white"><h5>{{user.first_name}} {{user.last_name}}</h5></a>
+              <a href="{%url 'user-profile' user.id %}" class="text-decoration-none text-white"><p>@{{user.username}}</p></a>
+            </div>
+          </div>
+
+          <!--Buttons-->
+            <div class="p-1 text-black" style="background-color: #f8f9fa;">
+              <div class="d-flex justify-content-lg-end ms-4 text-center py-1 justify-content-md-around {% if request.user.is_authenticated %} profile-info {% else %} profile-info-addons {% endif %}">
+                <a href="{% url 'owned-groups' user.id %}" style="text-decoration: None;" class="text-dark">
+                  <div class="link-hover-grey border-radius-10 p-3">
+                    <p class="mb-1 h5">{{all_groups|length}}</p>
+                    <p class="small text-muted mb-0">Groups</p>
+                  </div>
+                </a>
+                <a href="{% url 'followers' user.id %}" style="text-decoration: None;" class="text-dark">
+                  <div class="link-hover-grey border-radius-10 p-3">
+                    <p class="mb-1 h5">{{followers|length}}</p>
+                    <p class="small text-muted mb-0">Followers</p>
+                  </div>
+                </a>
+                <a href="{% url 'following' user.id %}" style="text-decoration: None;" class="text-dark">
+                  <div class="link-hover-grey border-radius-10 p-3">
+                    <p class="mb-1 h5">{{following|length}}</p>
+                    <p class="small text-muted mb-0">Followings</p>
+                  </div>
+                </a>
+              </div>
+            </div>
+          <!------------>
+        </div>
+        <!---------------->
+
+
+        <!--Main Content-->
+        <div class="card-body text-black bg-white">
+          <div class="d-flex justify-content-between align-items-center my-4 mx-3">
+            <select id="group-selector" class="form-select form-select-sm" aria-label=".form-select-sm example" data-user-id="{{ user.id }}">
+              <option value="groups" selected>Groups</option>
+              <option value="owned-groups">Owned Groups</option>
+            </select>
+          </div>
+
+          {% if groups.count == 0 %}
+              <small class="ms-3"><cite>No groups available</cite></small>
+          {% elif groups.count == 1 %}
+              <small class="ms-3"><cite>1 group available</cite></small>
+          {% else %}
+              <small class="ms-3"><cite>{{groups.count}} groups available</cite></small>
+          {% endif %}
+          
+          {% for group in groups %} 
+          <div class="container p-3 my-3 bg-white border-bottom" style="border-radius: 1%;">
+            <div class="row">
+                <div class="col-sm-3 mb-3">
+                  <a href="{% url 'group' group.id %}"><img class="img-thumbnail" src="{%if group.image%}{{group.image.url}}{%endif%}" style="width: 150px; height: 150px;"></a>
+                </div>
+                <div class="col-lg-6">
+                    {% if request.user == group.host %}
+                    <div class="container mb-2 ps-0">
+                        <a href="{% url 'update-group' group.id %}" class="text-decoration-none">
+      
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#4A7CBF" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                                <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
+                            </svg>
+      
+                        </a>
+                        <a href="{% url 'delete-group' group.id %}" class="text-decoration-none m-sm-3">
+      
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#4A7CBF" class="bi bi-trash" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                            </svg>
+                        </a>
+                    </div>
+                    {% endif %}
+                    <h5><a href="{% url 'group' group.id %}" class="text-decoration-none link-dark">{{group.title}}</a></h5>
+                    <p>{{group.description|truncatewords:20}}</p>
+                    <a href="{% url 'user-profile' group.host.id %}" class="text-muted text-decoration-none"><small>@{{group.host.username}}</small></a>
+                    <a href="{% url 'home'%}?q={{group.topic.title}}" class="text-muted text-decoration-none"><small>{{group.topic.title}}</small></a>
+                </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <!------------------------->
+
+
+      </div>
+    </div>
+
+    <div class="col-sm-2">
+    </div>
+
+  </div>
+</div>
+
+<!-- Image Modal -->
+<div class="modal" id="ImageModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body d-flex justify-content-center pt-4" id="imageDisplay">
+        <img class="" src="{%if user.profile.profile_pic%}{{user.profile.profile_pic.url}}{%endif%}" style="width: 300px; height: 300px">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!------------------------>
+
+
+  <script>
+const groupSelector = document.getElementById('group-selector');
+const userId = groupSelector.dataset.userId;
+const q = new URLSearchParams(window.location.search).get('q');
+
+if (q === 'owned-groups') {
+  groupSelector.value = 'owned-groups';
+}
+
+groupSelector.addEventListener('change', (event) => {
+  const selectedValue = event.target.value;
+  const searchUrl = `/user-groups/${userId}?q=${selectedValue}`;
+  window.location.href = searchUrl;
+});
+
+  </script>
+  
+
+{% endblock content %}

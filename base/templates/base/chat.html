@@ -1,0 +1,293 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load time_since %}
+{% block content %}
+
+<link rel='stylesheet' type='text/css' media='screen' href="{% static 'styles/chat.css' %}">
+
+<style>
+    .form-control:focus:not(:disabled):not(.readonly) {
+    outline: none;
+    box-shadow: none;
+    border-color: #CED4DA;
+    }
+
+    textarea::-webkit-resizer {
+    display: none;
+    }
+
+    textarea::-moz-resizer {
+    display: none;
+    }
+
+    textarea::-o-resizer {
+    display: none;
+    }
+
+    textarea::-ms-resizer {
+    display: none;
+    }
+
+
+    .custom-file-button input[type="file"] {
+        border-left: 1px solid #CED4DA;
+        margin-left: -2px !important;
+    }
+
+    .custom-file-button input[type="file"]::-webkit-file-upload-button {
+        display: none;
+    }
+
+    .custom-file-button input[type="file"]::file-selector-button {
+        display: none;
+    }
+
+    .custom-file-button:hover label {
+        background-color: #dde0e3;
+        cursor: pointer;
+    }
+
+    #messages{
+        height: 350px;
+        overflow: auto;
+    }
+</style>
+
+
+<section class="h-100 gradient-custom-2">
+    <div class="container py-3 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col col-xl-7">
+          <div class="card shadow">
+            <div class="rounded text-white d-flex flex-row bg-own-dark" style="background-color: #000; height:90px;">
+              <div class="ms-4 mt-4 d-flex flex-column" style="width: 200px;">
+                <h2>Chat</h2>
+                <hr>
+              </div>
+              </div>
+              <div class="card-body p-4 text-black bg-white">
+                  <!--Message Container-->
+                <div class="d-flex align-items-center flex-column">
+                    <div class="bg- w-100 pb-1 border-own-bottom border-own-right border-own-left border-own-top">
+                        <div class="w-50 link-hover-grey rounded" style="border-top-left-radius: 0% !important; border-bottom-left-radius: 0% !important;">
+                            <a href="{% url 'user-profile' receiver.id %}" class="text-decoration-none text-dark">
+                                <div class="d-flex align-items-center">
+                                    <img src="{%if receiver.profile.profile_pic%}{{receiver.profile.profile_pic.url}}{%endif%}" class="img-fluid m-3 rounded-circle" style="width: 60px; height: 60px;">
+                                    <p class="mt-3 ms-2 lead">{{receiver.get_full_name}}</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="w-100 border-own-right border-own-left " id="messages">
+                        <!--If There is No message-->
+                        {% if messages|length == 0 %}
+                        <div class="d-flex justify-content-center mt-3">
+                            <div class="">
+                                <small class="text-muted">Start a conversation</small>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <!---->
+    
+                        <!--Messages-->
+                        {% for message in messages %}
+                                <div class="d-flex justify-content-center mb-4 mt-3 timesince">
+                                    <small class="text-muted">{{message.created|time_since}}</small>
+                                </div>
+                            {% if message.user == request.user %}
+                                <div class="d-flex justify-content-end me-2">
+ 
+                                    <div class="col-6 d-flex justify-content-end">
+                                        {% if message.message|length != 0 %}
+                                        <div class="bg-own-dark text-white mb-2 talktext round">
+                                            <p class="message-body">{{message.message}}</p>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end me-2">
+                                    <div class="col-6">
+                                        {% if message.image %}
+                                            <div class="text-white p-1 mb-2 ms-1 rounded">                               
+                                                <img class="mb-3 rounded" src="{%if message.image%}{{message.image.url}}{%endif%}" style="height: 100%; width: 100%">             
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% else %}
+                                
+                                <div class="row w-100 mb-3">
+
+                                    {% if message.image == "" %}
+                                        <div class="col-2 col-lg-1 align-self-end me-1">
+                                            <a href="{% url 'user-profile' receiver.id %}">
+                                                <img src="{%if receiver.profile.profile_pic%}{{receiver.profile.profile_pic.url}}{%endif%}" class="ms-2 rounded-circle" style="width: 40px; height: 40px;">
+                                            </a>
+                                        </div>
+                                    {% else %}
+                                        <div style="width: 40px; height: 40px" class="col-3 align-self-end ms-4 rounded"></div>
+                                    {% endif %}
+    
+                                    {% if message.message|length != 0 %}
+                                        <div class="col-8">
+                                            <div class="d-flex justify-content-start"> 
+                                                <div class="bg-own-grey talktext round">
+                                                    <p class="message-body">{{message.message}}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                    {% if message.image %}
+                                        <div class="row w-100 mb-3">
+                                            <div class="col-2 col-lg-1 align-self-end me-1">
+                                                <a href="{% url 'user-profile' receiver.id %}">
+                                                    <img src="{%if receiver.profile.profile_pic%}{{receiver.profile.profile_pic.url}}{%endif%}" class="ms-2 rounded-circle" style="width: 40px; height: 40px;">
+                                                </a>
+                                            </div>
+                                            <div class="col-3 text-white rounded w-75">
+                                                <img class="mb-3 rounded" src="{%if message.image%}{{message.image.url}}{%endif%}" style="height: 100%; width: 100%">
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+
+
+                    <!--Send Message-->
+                    <div class="mb-4 w-100">
+                        <form method="POST" action="" enctype="multipart/form-data" >
+                            {% csrf_token %}
+                            <textarea type="text" name="message" placeholder="Send Message..." rows="2" autocomplete="off" class="form-control border-own-left border-own-right border-own-top" style="border-bottom: none; border-radius: 0%;" oninput="autoExpand(this)"></textarea>
+                            <div class="d-flex justify-content-between bg-white p-2 border-own-top border-own-left border-own-right border-own-bottom" style="border: 1px solid #CED4DA;">             
+                                <div class="input-group custom-file-button w-50">
+                                    <label class="input-group-text" for="inputGroupFile">Choose Image</label>
+                                    <input type="file" class="form-control" id="inputGroupFile" name="image">
+                                </div>
+                                <button type="submit" class="btn text-white bg-own-dark">Send</button>
+                            </div>                   
+                        </form>
+                    </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+
+
+
+
+
+
+<script>
+    function showMessages(letter) {
+        var div = $("#messages");
+        div.scrollTop(div.prop('scrollHeight'));
+    }
+    $(function() {
+        showMessages();
+    });
+
+    function autoExpand(textarea) {
+        // Reset the textarea's height to the default value
+        textarea.style.height = 'auto';
+
+        // Set the textarea's height to the scroll height, so it expands as the user types
+        textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+</script>
+
+<script>
+    $(function() {
+    $('form').submit(function(event) {
+        event.preventDefault();  // prevent the form from submitting normally
+        var form_data = new FormData(this);
+        $.ajax({
+        url: '{% url "chat-user" receiver.id %}',
+        type: 'POST',
+        data: form_data,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.success) {
+            $('#message-status').text(response.success);
+            location.reload();  // refresh the page
+            } else {
+            $('#message-status').text(response.error);
+            }
+        },
+        error: function() {
+            $('#message-status').text('An error occurred.');
+        }
+        });
+    });
+    });
+</script>
+
+<script>
+    // get the messages div element
+const messagesDiv = document.getElementById('messages');
+
+// check if there are no messages
+if (messagesDiv.children.length === 0) {
+  const messageContainer = document.createElement('div');
+  messageContainer.classList.add('d-flex', 'justify-content-center', 'mt-3');
+  const messageText = document.createElement('div');
+  messageText.classList.add('text-muted');
+  messageText.textContent = 'Start a conversation';
+  messageContainer.appendChild(messageText);
+  messagesDiv.appendChild(messageContainer);
+}
+
+// iterate through each message element
+for (const messageElement of messagesDiv.children) {
+  // check if the message has a timesince class
+  if (messageElement.classList.contains('timesince')) {
+    const messageTime = messageElement.textContent;
+    // you can do something with the messageTime here, if needed
+  } else {
+    // get the message user
+    const messageUser = messageElement.querySelector('.col-6');
+    // check if the message user is the current user
+    if (messageUser.classList.contains('justify-content-end')) {
+      const messageText = messageUser.querySelector('.message-body').textContent;
+      // you can do something with the messageText here, if needed
+      const messageImage = messageUser.querySelector('img');
+      // check if the message has an image
+      if (messageImage) {
+        const messageImageSrc = messageImage.getAttribute('src');
+        // you can do something with the messageImageSrc here, if needed
+      }
+    } else {
+      const messageImage = messageElement.querySelector('img');
+      // check if the message has an image
+      if (messageImage) {
+        const messageImageSrc = messageImage.getAttribute('src');
+        // you can do something with the messageImageSrc here, if needed
+      }
+      const messageText = messageElement.querySelector('.message-body').textContent;
+      // you can do something with the messageText here, if needed
+    }
+  }
+}
+
+</script>
+
+
+
+{% endblock content %}
+
+
+
+
+
+
+

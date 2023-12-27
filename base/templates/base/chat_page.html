@@ -1,0 +1,39 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load time_since %}
+{% block content %}
+
+<section class="h-100 gradient-custom-2">
+  <div class="container py-3 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col col-xl-7">
+        <div class="card shadow">
+          <div class="rounded text-white d-flex flex-row bg-own-light" style="background-color: #000; height:90px;">
+            <div class="ms-4 mt-4 d-flex flex-column" style="width: 200px;">
+              <h2>Messages</h2>
+              <hr>
+            </div>
+            </div>
+            <div class="card-body p-4 text-black bg-white">
+              {% for chatter in chatters %}
+                <div class="my-4 pb-2" style="border-bottom: #eee 1px solid;">
+                  <a href="{% url 'chat-user' chatter.id %}"><img src="{%if chatter.profile.profile_pic%}{{chatter.profile.profile_pic.url}}{%endif%}" class="img-fluid ml-0 mt-1 rounded-circle" style="width: 60px; height: 60px;"></a>
+                    <small class="ms-1 mt-2"><a href="{% url 'chat-user' chatter.id %}" class="text-decoration-none text-own-dark">{{chatter.get_full_name}}</a></small>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+
+
+
+{% endblock content %}

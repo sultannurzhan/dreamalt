@@ -1,0 +1,102 @@
+{% extends 'main.html' %}
+
+{% block content  %}
+
+<style>
+
+.image-container{
+    width: 50%; /* or any other value smaller than the original width */
+    height: 50%; /* or any other value smaller than the original height */
+}
+
+.custom-file-upload input[type="file"] {
+    display: none;
+}
+.custom-file-upload {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #2364aa;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    transition: 0.3s;
+}
+
+.custom-file-upload:hover{
+  background-color: #2364aa;
+  color: #fff
+}
+
+
+</style>
+<section class="h-100 gradient-custom-2">
+  <div class="container py-3 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col col-xl-7">
+        <div class="card shadow">
+          <div class="rounded text-white d-flex flex-row bg-own-light" style="background-color: #000; height:90px;">
+            <div class="ms-4 mt-4 d-flex flex-column" style="width: 200px;">
+              <h2>Update Group</h2>
+              <hr>
+            </div>
+            </div>
+            <div class="card-body p-4 text-black bg-white">
+                <form method="post" enctype="multipart/form-data">
+
+                    <!--Image Area-->
+                    <div class="">
+                        <img id="current-image" src="{%if group.image%}{{ group.image.url }}{%endif%}" class="img-fluid rounded-circle border" style="width: 200px; height: 200px;">
+                        <br>
+                        <label for="clear_image" class="my-3">Delete Image</label>
+                        <input type="checkbox" name="clear_image" id="clear_image">
+                        <br>
+                        <label for="image-upload" class="custom-file-upload mb-3">
+                            Select an image
+                            <input id="image-upload" type="file" name="image" class="form-control w-50">
+                        </label>                             
+                        <br>
+                    </div>
+                    <!-------------->
+
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="btn-group mt-3">
+                        <a href="{% url 'group' group.id %}" class="btn btn-outline-dark">Go Back</a>
+                        <button type="submit" class="btn btn-primary bg-own-light">Update</button>
+                    </div>
+                </form>
+
+              </div>
+          </div>
+
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<script>
+    $(document).ready(function() {
+        // Add an event listener to the file input element
+        $('#image-upload').on('change', function() {
+            // Retrieve the new image file
+            var newImageFile = $(this).prop('files')[0];
+            if (newImageFile) {
+                // Create a new image URL using the File API
+                var newImageUrl = URL.createObjectURL(newImageFile);
+                // Update the current image element with the new image URL
+                $('#current-image').attr('src', newImageUrl);
+            }
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+{% endblock content %}

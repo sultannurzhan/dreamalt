@@ -1,0 +1,504 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load time_since %}
+{% load button_classes %}
+{% block content %}
+
+<link rel='stylesheet' type='text/css' media='screen' href="{% static 'styles/dropdown.css' %}">
+<link rel='stylesheet' type='text/css' media='screen' href="{% static 'styles/group.css' %}">
+
+<style>
+  .link-button{
+      background: none!important;
+      border: none;
+      padding: 0!important;
+      /*optional*/
+      /*input has OS specific font-family*/
+      color: #212529;
+      text-decoration: none;
+      cursor: pointer;
+  }
+
+  #imageDisplay{
+        height: 350px;
+        overflow: auto;
+  }
+
+  .user-name{
+    margin-top: 130px;
+  }
+
+  @media (max-width: 979px) {
+    .user-name{
+      margin-top: 110px;
+    }
+  }
+
+  #postDisplay{
+          max-height: 400px;
+          overflow: auto;
+          /*box-shadow: 0 8px 5px -2px #ccc;*/
+  }
+  
+</style>
+
+
+<div class="container py-lg-3">
+  <div class="row">
+
+    <!--Side Content-->
+    <div class="col-sm-3">
+        <div class="col-sm-2 sidenav d-none d-xl-block mt-4">
+            <div class="d-none d-xl-block ">
+                
+                <a href="{% url 'group-page' %}" class="text-decoration-none text-own-black"><h3 class="fw-bold ms-3">Browse</h3>
+                <hr class="w-50 ms-3">
+                <ul class="nav flex-column">
+                    <a href="{% url 'following-news'%}" class="text-dark text-decoration-none">
+                        <li class="nav-item link-hover-white py-2 px-3 rounded">
+                            All
+                        </li>
+                    </a>
+                        
+                    {% for topic in topics|slice:"8" %}
+                        <a href="{% url 'following-news'%}?q={{topic.title}}" class="text-dark text-decoration-none">
+                            <li class="nav-item link-hover-white py-2 px-3 rounded">
+                                {{topic.title}}
+                            </li>
+                        </a>
+                    {% endfor %}
+                    <hr class="w-75 ms-3">
+        
+                    <div class="w-75 ms-3">
+                        <div class="font-own-xxsm"><a href="{% url 'about' %}" class="text-decoration-none text-underline-hover text-muted">About・</a><a href="{% url 'careers' %}" class="text-decoration-none text-underline-hover text-muted">Careers・</a><a href="{% url 'terms' %}" class="text-decoration-none text-underline-hover text-muted">Terms・</a><a href="{% url 'privacy' %}" class="text-decoration-none text-underline-hover text-muted">Privacy・</a><a href="{% url 'business' %}" class="text-decoration-none text-underline-hover text-muted">Business・</a><a href="{% url 'contact' %}" class="text-decoration-none text-underline-hover text-muted">Contact・</a><a href="{% url 'your-ad-choices' %}" class="text-decoration-none text-underline-hover text-muted">Your Ad Choices</a></div>
+                    </div>
+                    
+                </ul>
+            </div>
+        </div> 
+        <div class="col-sm-2">
+            <div class="d-none d-xl-block ">
+            </div>
+        </div>
+    </div>
+    <!------------------->
+
+    <div class="col align-items-center px-0 bg">
+
+      <!--Main Content-->
+      <div class="p-lg-4">
+
+        <!--Head-->
+        <div class="px-2 pt-lg-0 pt-4">
+            <h3 class="fw-bold">Latest Posts</h3>
+
+            {% if posts|length == 0 %}
+            <small class="text-muted"><cite>No recent post</cite></small>
+            {% endif %}
+        </div>
+
+        <div class="">
+            {% for post in posts|slice:"30" %}
+                <div class="container-fluid my-4 pt-1 pb-3 px-3 bg-white feedcontainer mx-0">
+                    <div class="d-flex align-items-center position-relative">
+                        <a href="{% url 'group' post.group.id %}">
+                          <img src="{%if post.group.image%}{{post.group.image.url}}{%endif%}" class="img-fluid ml-0 mt-2" style="width: 60px; height: 60px; border-radius: 50%;">
+                        </a>
+                        <div class="mt-2 ms-3">
+                          <a href="{% url 'group' post.group.id %}" class="text-decoration-none" style="color: black">
+                            {{post.group.title}}
+                          </a>
+                          <br>
+                          <a href="{% url 'user-profile' post.user.id %}" class="text-decoration-none text-muted" style="font-size: 14px;">
+                            {{post.user.get_full_name}}・{{post.created|time_since}}
+                          </a> 
+                          {% if request.user.is_authenticated %}                            
+                          {% if request.user == post.user %}
+                          <div class="dropdown position-absolute" style="right: -20px;" tabindex="0" id="post-dropdown">
+                            <div class="dots">&ctdot;</div>
+                            <div class="dropdown-menu shadow">
+                              <form id="delete-post-form" method="post" action="{% url 'delete-post' post.id %}">
+                                {% csrf_token %}
+                                <button type="button" class="dropdown-item delete-post-btn">Delete</button>
+                              </form>                          
+                            </div>
+                          </div>
+                          {% endif %}
+                          {% endif %}
+                        </div>
+                    </div> 
+                      <div class="ms-2">
+                        <div class="mb-2" id="postDisplay">
+                          <p>{{post.body|linebreaks}}</p>
+                        </div>
+                        {% if post.image %}
+                        <div class="">
+                            <img class="mb-3" src="{%if post.image %}{{post.image.url}}{%endif%}" style="height: 100%; width: 100%">
+                        </div>
+                        {% endif %}
+                      </div>
+                      <button class="like-button btn shadow-none {% button_classes post request.user %} like-post-button" data-post-id="{{ post.id }}" data-is-authenticated="{{ is_authenticated }}">
+                        <i class="fa fa-heart"></i>
+                        <span class="like-count">{{ post.likes_count }}</span>
+                      </button>
+
+                      <button class="comment-button btn shadow-none" data-group-id="{{ post.group.id }}" data-post-id="{{ post.id }}" data-is-authenticated="{{ is_authenticated }}" type="button" data-bs-toggle="modal" data-bs-target="#PostDetailModal-{{ post.id }}">
+                        <i class="fas fa-comments" style="color: #ccc; margin-left: -10px;"></i>
+                        <span class="like-count">{{ post.comments_count }}</span>
+                      </button>
+                      <!-- Post Detail and Comment Modal -->
+                      <div class="modal" id="PostDetailModal-{{ post.id }}">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                          <div class="modal-content PostDetailModal">
+                            <div class="modal-header">
+                              <div class="d-flex justify-content-center">
+                                {% if post.user.first_name and post.user.last_name %}
+                                  <h4 class="modal-title">{{ post.user.get_full_name }}'s Post</h4>
+                                {% else %}
+                                  <h4 class="modal-title">{{ post.user.username }}'s Post</h4>
+                                {% endif %}
+                              </div>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body" id="PostDetailDisplay">
+                              {% if post.body %}
+                                {{post.body|linebreaks}}
+                              {% endif %}
+                              {% if post.image %}
+                              <div class="d-flex justify-content-center border-top my-2" style="background-color: #F7F9F6;">
+                                <img class="mb-3" src="{%if post.image %}{{post.image.url}}{%endif%}" style="height: 60%; width: 60%">
+                              </div>
+                              {% endif %}
+                              <small class="text-muted">{{post.created|time_since}}</small>
+                              <div class="d-flex justify-content-between ms-1 mt-2">
+                                <div class="">
+                                  <i class="fa fa-heart" style="color: #ff0000;"></i>
+                                  <span class="like-count">{{ post.likes_count }} likes</span>
+                                </div>
+                                <div class="">
+                                  <span class="comment-count"></span>
+                                </div>
+                              </div>
+                              {% if request.user.is_authenticated %}
+                              <div class="add-comment mt-3 mb-4">
+                                
+                                <form class="my-comment-form" data-group-id="{{ post.group.id }}" data-post-id="{{ post.id }}" data-profile-pic="{{ user.profile.profile_pic.url }}">
+                                  {% csrf_token %}
+                                  <div class="form-group">
+                                      <textarea class="form-control comment-body" rows="3" required></textarea>
+                                      <button type="submit" class="btn btn-primary mt-2" style="background-color: #2364aa">Add comment</button>
+                                  </div>
+                                </form>                         
+                              </div>
+                              {% else %}
+                              <hr>
+                              {% endif %}
+                              <div class="newCommentDisplay">
+                              </div>
+                              <div class="CommentDisplay">
+                              </div>                                
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-------------------------------->
+                </div>
+            {% endfor %} 
+
+
+        </div>
+        
+
+
+      </div>
+    </div>
+
+    <div class="col-sm-3">
+    </div>
+
+  </div>
+</div>
+
+<!-- Image Modal -->
+<div class="modal" id="ImageModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body d-flex justify-content-center pt-4" id="imageDisplay">
+        <img class="" src="{%if user.profile.profile_pic%}{{user.profile.profile_pic.url}}{%endif%}" style="width: 300px; height: 300px">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!------------------------>
+
+<!-- Like Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalCenterTitle">Login Required</h5>
+            <button type="button" class="btn-close" id="modal-close" data-dismiss="modal" aria-label="Close">
+            
+            </button>
+        </div>
+        <div class="modal-body">
+            Please login to like a post.
+        </div>
+        <div class="modal-footer">
+            <a href="{% url 'login' %}" class="btn btn-primary bg-own-dark">Login</a>
+            <button type="button" class="btn btn-danger" id="modal-close2" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+</div>
+    
+<div id="hidden-element" data-logged-in="{{ request.user.is_authenticated }}" style="display: none;"></div>
+<!------------------>
+
+<script>
+
+
+    //Like Post Functions
+
+    $(document).on('click', '.like-button', function() {
+    var $likeButton = $(this);
+    //console.log('a', $likeButton.data('post-id'));
+    login_required($likeButton);
+    });
+
+    $('#modal-close').click(function() {
+        $('#loginModal').modal('hide');
+    });
+
+    $('#modal-close2').click(function() {
+        $('#loginModal').modal('hide');
+    });
+
+
+  //Expand the post
+  function autoExpand(textarea) {
+      // Reset the textarea's height to the default value
+      textarea.style.height = 'auto';
+
+      // Set the textarea's height to the scroll height, so it expands as the user types
+      textarea.style.height = `${textarea.scrollHeight}px`;
+  }
+</script>
+
+<script>
+      
+  function timesince(date) {
+    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+    let interval = Math.floor(seconds / 31536000);
+
+    if (interval > 1) {
+      return interval + " years";
+    }
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) {
+      return interval + " months";
+    }
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) {
+      return interval + " days";
+    }
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) {
+      return interval + " hours";
+    }
+    interval = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60; // calculate remaining seconds
+    if (interval > 1) {
+      return interval + " minutes";
+    }
+    if (interval == 1) {
+      return interval + " minute";
+    }
+    if (seconds <= 0) {
+      return "just now";
+    }
+    return Math.floor(seconds) + " seconds";
+  }
+
+
+$(document).on('click', '.comment-button', function() {
+  var CommentDisplay = $('.CommentDisplay');
+  var newCommentDisplay = $('.newCommentDisplay');
+  CommentDisplay.empty(); // clear existing comments
+  newCommentDisplay.empty(); // to avoid duplicate comment clear newCommentDisplay
+  var post_id = $(this).data('post-id');
+  var group_id = $(this).data('group-id')
+  var url = '/group/' + group_id + '/comments/' + post_id + '/';
+$.getJSON(url, function(data) {
+var comments = data.comments;
+  
+for (var i = 0; i < comments.length; i++) {
+  var comment = comments[i];
+  var commentHtml = 
+    '<div class="d-flex mb-3 comment-' + comment.id + '">' + 
+      '<div class="">' +
+        '<a href="/user' + comment.user_id + '" class="text-decoration-none"><img src="' + comment.profile_pic + '" class="rounded-circle" style="width: 40px; height: 40px;"></a>' +
+      '</div>' +
+      '<div class="ms-2 com-style">' +
+        '<a href="/user' + comment.user_id + '" class="text-decoration-none text-dark"> <span><strong>' + comment.full_name + '</strong></span></a><br>' + 
+        '<span>' + comment.body + '</span><br>' +
+        '<span><small class="text-muted">' + timesince(comment.created) + '</small></span>'+
+      '</div>'
+        +
+       '<div class="ms-2">'; 
+
+  if (comment.user_id == '{{ request.user.id }}') {
+    commentHtml += 
+
+    '<div class="dropdown mt-3" id="post-dropdown">' + 
+        '<div class="dots">&ctdot;</div>' +
+        '<div class="dropdown-menu shadow">' +
+          '<form id="delete-comment-form-' + comment.id + '" method="POST" action="">' +
+                '{% csrf_token %}' +
+                '<button type="" class="dropdown-item delete-comment-btn" data-comment-id="' + comment.id + '">Delete</button>' +
+            '</form>' +
+        '</div>' +
+    '</div>';
+
+  }
+
+  commentHtml += '</div></div>';
+
+  CommentDisplay.append(commentHtml);
+}
+
+// Attach event listener to delete buttons
+$('.delete-comment-btn').on('click', function(e) {
+  e.preventDefault();
+  var commentId = $(this).data('comment-id');
+  var deleteUrl = '/delete-comment/' + commentId + '/';
+  var deleteForm = $('#delete-comment-form-' + commentId);
+  
+  $.ajax({
+    type: 'POST',
+    url: deleteUrl,
+    data: deleteForm.serialize(),
+    success: function(response) {
+      if (response.success) {
+        $('.comment-' + commentId).remove();
+      } else {
+        // Handle error response
+      }
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+      // Handle error
+    }
+  });
+});
+
+
+var CommentCount = $('.comment-count');
+CommentCount.empty();
+var commentCount = comments.length;
+CommentCount.append(commentCount + ' comments');
+});
+});
+
+
+
+$('.my-comment-form').submit(function(event) {
+event.preventDefault();
+var commentForm = $(this);
+var commentBody = commentForm.find('.comment-body').val();
+var group_id = commentForm.data('group-id');
+var post_id = commentForm.data('post-id');
+var url = '/group/' + group_id + '/post/' + post_id + '/add_comment/';
+var profilePic = commentForm.data('profile-pic');
+
+$.ajax({
+url: url,
+type: 'POST',
+data: {
+  'comment-body': commentBody,
+  'csrfmiddlewaretoken': '{{ csrf_token }}',
+  'post_id': post_id,
+  'group_id': group_id
+},
+success: function(data) {
+  // clear the form
+  commentForm.find('.comment-body').val('');
+
+  // create the HTML for the new comment
+  var commentHtml = 
+    '<div class="d-flex mb-3 comment-' + data.id + '">' + 
+      '<div class="">' +
+        '<a href="/user' + data.user_id + '" class="text-decoration-none"><img src="' + profilePic + '" class="rounded-circle" style="width: 40px; height: 40px;"></a>' +
+      '</div>' +
+      '<div class="ms-2 com-style">' +
+        '<a href="/user' + data.user_id + '" class="text-decoration-none text-dark"> <span><strong>' + data.full_name + '</strong></span></a><br>' + 
+        '<span>' + data.body + '</span><br>' +
+        '<span><small class="text-muted">' + timesince(data.created) + '</small></span>' +
+      '</div>' 
+      +
+       '<div class="ms-2">'; 
+
+  if (data.user_id == '{{ request.user.id }}') {
+    commentHtml += 
+
+    '<div class="dropdown mt-3" id="post-dropdown">' + 
+        '<div class="dots">&ctdot;</div>' +
+        '<div class="dropdown-menu shadow">' +
+          '<form id="delete-comment-form-' + data.id + '" method="POST" action="">' +
+                '{% csrf_token %}' +
+                '<button type="" class="dropdown-item delete-comment-btn" data-comment-id="' + data.id + '">Delete</button>' +
+            '</form>' +
+        '</div>' +
+    '</div>';
+
+  }
+  commentHtml += '</div></div>';
+
+  // append the new comment to the comment display
+  commentForm.closest('.modal-body').find('.newCommentDisplay').append(commentHtml);
+
+
+// Attach event listener to delete buttons
+$('.delete-comment-btn').on('click', function(e) {
+  e.preventDefault();
+  var commentId = $(this).data('comment-id');
+  var deleteUrl = '/delete-comment/' + commentId + '/';
+  var deleteForm = $('#delete-comment-form-' + commentId);
+  
+  $.ajax({
+    type: 'POST',
+    url: deleteUrl,
+    data: deleteForm.serialize(),
+    success: function(response) {
+      if (response.success) {
+        $('.comment-' + commentId).remove();
+      } else {
+        // Handle error response
+      }
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+      // Handle error
+    }
+  });
+});
+  
+},
+
+
+
+error: function() {
+  alert('Failed to add comment!');
+}
+
+
+});
+
+});
+
+
+</script>
+
+
+{% endblock content %}

@@ -1,0 +1,255 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<style>
+
+
+
+    .profile-button {
+        background: #4A7CBF(99, 39, 120);
+        box-shadow: none;
+        border: none
+    }
+
+    .profile-button:hover {
+        background: #4A7CBF;
+    }
+
+    .profile-button:focus {
+        background: #4A7CBF;
+        box-shadow: none
+    }
+
+    .profile-button:active {
+        background: #4A7CBF;
+        box-shadow: none
+    }
+
+    .back:hover {
+        color: #4A7CBF;
+        cursor: pointer
+    }
+
+    .labels {
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+    }
+
+    .add-experience:hover {
+        background: #4A7CBF;
+        color: #fff;
+        cursor: pointer;
+        border: solid 1px #4A7CBF
+    }
+
+</style>
+
+<div class="container py-lg-3">
+  <div class="row">
+
+    <div class="col-sm-2">
+    </div>
+
+    <div class="col align-items-center px-0">
+            <div class="container bg-white mb-lg-5 mb-0 py-5 border rounded shadow">
+              <!--Edit Text-->
+                <div class="row">
+                  <div class="col-sm-4">
+                    <div class="d-flex flex-column align-items-center text-center">
+                      <h2 class="fw-bold">Edit Profile</h2>
+                    </div>
+                  </div>
+                </div>
+                <!---->
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="d-flex flex-column align-items-center text-center p-3">
+                          <img src="{%if user.profile.profile_pic%}{{user.profile.profile_pic.url}}{%endif%}"
+                          alt="Profile picture" class="img-fluid img-thumbnail mt-4 mb-2"
+                          style="width: 150px; height: 150px;" id="current-image">
+
+                          <span class="font-weight-bold">{{request.user.first_name}} {{request.user.last_name}}</span><span class="text-black-50">@{{request.user.username}}</span>
+                          <span> </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="p-3">
+                       
+                          <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            
+                            <div class="row mt-2 bg">
+                                <div class="col-sm-9">
+                                    {% csrf_token %}
+                                    {{ form.as_p }}
+                                </div>
+                            </div>
+                            
+
+                            {% for field in form2 %}
+                            <div class="row mb-3">
+                                <div class="col-sm-9">
+                                    <label class="labels">{{field.label}}:</label>
+                                    {{field}}
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                            <div class="row mb-3">
+                              <div class="col-sm-9">
+                                  <label class="labels">Profile picture:</label>
+                                  <input type="file" name="profile_pic" id="id_profile_pic" class="form-control">
+                                  
+                              </div>
+                          </div>
+
+                          <label for="clear_image" class="mb-5">Delete Image</label>
+                          <input type="checkbox" name="clear_image" id="clear_image">
+
+                            <br>
+                            <div class="btn-group">
+                                <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Go Back</a>
+                                <button type="submit" class="btn btn-primary bg-own-dark">Edit</button>
+                            </div>
+                          </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+          </div>
+
+        <div class="col-sm-2">
+        </div>
+
+      </div>
+</div>
+
+  
+
+
+<script>
+  $(document).ready(function() {
+      // Add an event listener to the file input element
+      $('#id_profile_pic').on('change', function() {
+          // Retrieve the new image file
+          var newImageFile = $(this).prop('files')[0];
+          if (newImageFile) {
+              // Create a new image URL using the File API
+              var newImageUrl = URL.createObjectURL(newImageFile);
+              // Update the current image element with the new image URL
+              $('#current-image').attr('src', newImageUrl);
+          }
+      });
+  });
+</script>
+
+
+{% endblock content %}
+
+
+
+<!--
+
+<form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    {% csrf_token %}
+                                    {{ form.as_p }}
+                                </div>
+                            </div>
+                            
+
+                            {% for field in form2 %}
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <label class="labels">{{field.label}}</label>
+                                    {{field}}
+                                </div>
+                            </div>
+                            {% endfor %}
+
+
+                            <div class="image-container my-3">
+                                {% if user.profile.profile_pic %}
+                                    <img id="profile_pic" src="{{ profile.profile_pic.url }}" class="img-fluid" />
+                                {% else %}
+                                    <img id="profile_pic" src="#" style="visibility: hidden;" class="img-fluid" />
+                                {% endif %}
+                                <input type="hidden" id="cropped-image" name="cropped_image" />
+                            </div>
+
+                            <div class="btn-group">
+                                <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-secondary">Go Back</a>
+                                <button type="submit" class="btn btn-primary bg-own-dark">Update</button>
+
+                                {% if profile.profile_pic %}
+                                <button id="clear-image" type="button" class="btn btn-secondary">Delete Image</button>
+                                {% endif %}
+
+                            </div>
+                    </form>
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.6/dist/cropper.min.js"></script>
+<script>
+  var image = document.getElementById('profile_pic');
+  var input = document.getElementById('cropped-image');
+  var cropper = null;
+
+  document.querySelector('input[type="file"]').addEventListener('change', function() {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      if (cropper) {
+        cropper.destroy();
+      }
+      profile_pic.src = e.target.result;
+      cropper = new Cropper(image, {
+        aspectRatio: 1,
+        minCropBoxWidth: 300,
+        minCropBoxHeight: 300,
+        zoomable: false,
+        crop(event) {
+          input.value = cropper.getCroppedCanvas().toDataURL();
+        }
+      });
+    };
+    reader.readAsDataURL(this.files[0]);
+  });
+
+  // Check if the existing image URL is not an empty string
+  if (profile_pic.src && profile_pic.src !== '') {
+    cropper = new Cropper(profile_pic, {
+      aspectRatio: 1,
+      minCropBoxWidth: 300,
+      minCropBoxHeight: 300,
+      zoomable: false,
+      crop(event) {
+        input.value = cropper.getCroppedCanvas().toDataURL();
+      }
+    });
+  }
+
+  // Clear Image 
+  var clearImageButton = document.getElementById('clear-image');
+  
+  if (clearImageButton) {
+    clearImageButton.addEventListener('click', function() {
+      input.value = '';
+      profile_pic.src = '#';
+      cropper.destroy();
+    });
+  }
+
+
+</script>
+-->

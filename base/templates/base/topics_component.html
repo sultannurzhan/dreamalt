@@ -1,0 +1,36 @@
+<div class="col-sm-2 sidenav d-none d-xl-block">
+
+
+    <div class="d-none d-xl-block ">
+        
+        <a href="{% url 'group-page' %}" class="text-decoration-none text-own-black"><h3 class="fw-bold ms-3">Browse</h3>
+        <hr class="w-50 ms-3">
+        <ul class="nav flex-column">
+            <a href="{% url 'home'%}" class="text-dark text-decoration-none">
+                <li class="nav-item link-hover-white py-2 px-3 rounded">
+                    All
+                </li>
+            </a>
+                
+            {% for topic in topics|slice:"8" %}
+                <a href="{% url 'home'%}?q={{topic.title}}" class="text-dark text-decoration-none">
+                    <li class="nav-item link-hover-white py-2 px-3 rounded">
+                        {{topic.title}}
+                    </li>
+                </a>
+            {% endfor %}
+            <hr class="w-75 ms-3">
+
+            <div class="w-75 ms-3">
+                <div class="font-own-xxsm"><a href="{% url 'about' %}" class="text-decoration-none text-underline-hover text-muted">About・</a><a href="{% url 'careers' %}" class="text-decoration-none text-underline-hover text-muted">Careers・</a><a href="{% url 'terms' %}" class="text-decoration-none text-underline-hover text-muted">Terms・</a><a href="{% url 'privacy' %}" class="text-decoration-none text-underline-hover text-muted">Privacy・</a><a href="{% url 'business' %}" class="text-decoration-none text-underline-hover text-muted">Business・</a><a href="{% url 'contact' %}" class="text-decoration-none text-underline-hover text-muted">Contact・</a><a href="{% url 'your-ad-choices' %}" class="text-decoration-none text-underline-hover text-muted">Your Ad Choices</a></div>
+            </div>
+            
+
+        </ul>
+    </div>
+</div> 
+
+<div class="col-sm-2">
+    <div class="d-none d-xl-block ">
+    </div>
+</div>
