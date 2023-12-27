@@ -1,0 +1,117 @@
+.fa-heart{
+    color: #ccc;
+    margin-left: -4px;
+  }
+      
+  .liked .fa-heart {
+    color: #ff0000;
+    margin-left: -4px;
+  }
+
+  .form-control:focus:not(:disabled):not(.readonly) {
+    outline: none;
+    box-shadow: none;
+    border-color: #CED4DA;
+  }
+
+  textarea::-webkit-resizer {
+    display: none;
+  }
+
+  textarea::-moz-resizer {
+    display: none;
+  }
+
+  textarea::-o-resizer {
+    display: none;
+  }
+
+  textarea::-ms-resizer {
+    display: none;
+  }
+
+
+  .custom-file-button input[type="file"] {
+      border-left: 1px solid #CED4DA;
+      margin-left: -2px !important;
+  }
+
+  .custom-file-button input[type="file"]::-webkit-file-upload-button {
+      display: none;
+  }
+
+  .custom-file-button input[type="file"]::file-selector-button {
+      display: none;
+  }
+
+  .custom-file-button:hover label {
+      background-color: #dde0e3;
+      cursor: pointer;
+  }
+
+  .link-button{
+      background: none!important;
+      border: none;
+      padding: 0!important;
+      /*optional*/
+      /*input has OS specific font-family*/
+      color: #212529;
+      text-decoration: none;
+      cursor: pointer;
+  }
+
+  #aboutDisplay{
+          height: 200px;
+          overflow: auto;
+      }
+
+  #contactDisplay{
+          height: 150px;
+          overflow: auto;
+      }
+
+  #membersDisplay{
+          height: 350px;
+          overflow: auto;
+      }
+
+  #imageDisplay{
+          height: 350px;
+          overflow: auto;
+      }
+
+  #postDisplay{
+          max-height: 400px;
+          overflow: auto;
+          font-size: 15px;
+          /*box-shadow: 0 8px 5px -2px #ccc;*/
+  }
+
+  .PostDetailModal{
+          height: 700px;
+          overflow: auto;
+          font-size: 15px;
+  }
+
+  .com-style{
+    background-color: #F0F2F5 !important;
+    border-radius: 20px;
+    padding-left: 15px;
+    padding-right: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: 14px;
+  }
+
+
+    #group-dropdown{
+      top: -10px; right: -40px;
+      font-size: 1.5em;
+    }
+
+    @media (max-width: 979px) {
+      #group-dropdown{
+        top: -230px; right: -0px;
+      }
+    }
+

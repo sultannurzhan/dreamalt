@@ -1,0 +1,22 @@
+  .border{
+    border: 8px solid #666;
+  }
+  .round{
+    border-radius: 20px;
+      -webkit-border-radius: 20px;
+      -moz-border-radius: 20px;
+  
+  }
+
+  
+  /* talk bubble contents */
+  .talktext{
+    padding: 0.8em;
+      text-align: left;
+    line-height: 1.5em;
+  }
+  .talktext p{
+    /* remove webkit p margins */
+    -webkit-margin-before: 0em;
+    -webkit-margin-after: 0em;
+  }

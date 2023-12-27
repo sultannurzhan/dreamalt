@@ -1,0 +1,31 @@
+#post-dropdown{
+  font-size: 1.5em;
+}
+
+.dropdown {
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
+    top: 1px;
+  }
+
+  .dropdown-menu {
+    left: auto !important;
+    right: 0 !important;
+    background-color: white;
+    border-radius: 5px;
+    border: none !important;
+  }
+
+  
+  .dropdown:hover .dropdown-menu {
+    display: block;
+  }
+
+
+  .dropdown-item:hover{
+    background-color: #ECEEF0;
+    color: black;
+  }
+  
+
