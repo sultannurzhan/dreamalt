@@ -113,7 +113,7 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 class ChatMessage(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="received_messages")
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="receivers")
     message = models.TextField(null=True, blank=True)
     image = models.ImageField(null=True, blank=True, upload_to="message-images/")
     updated = models.DateTimeField(auto_now=True)

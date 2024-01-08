@@ -721,9 +721,39 @@ class ChatPageView(View):
     def get(self, request):
         user = User.objects.get(pk=request.user.id)
         chatters = user.profile.chatters.all()
-        print(chatters)
-        context = {'chatters': chatters}
+        received_messages = ChatMessage.objects.filter(receiver=user)
+        sent_messages = ChatMessage.objects.filter(user=user)
+        last_received_messages = []
+
+        hasSameUser = False
+        for message in received_messages:
+            for last_message in last_received_messages:
+                if message.user == last_message.user:
+                    hasSameUser = True
+                    if message.created > last_message.created:              
+                        last_received_messages.remove(last_message)
+                        last_received_messages.append(message)
+            if hasSameUser == False:
+                last_received_messages.append(message)
+
+        last_sent_messages = []
+        hasSameUser = False
+        for message in sent_messages:
+            for last_message in last_sent_messages:
+                if message.receiver == last_message.receiver:
+                    hasSameUser = True
+                    if message.created > last_message.created:
+                        last_sent_messages.remove(last_message)
+                        last_sent_messages.append(message)
+            if hasSameUser == False:
+                last_sent_messages.append(message)
+
+  
+        context = {'chatters': chatters, 'received_messages': received_messages, 'last_received_messages': last_received_messages, 'last_sent_messages': last_sent_messages}
         return render(request, 'base/chat_page.html', context)
+
+
+
 
 class AboutView(View):
     def get(self, request):
