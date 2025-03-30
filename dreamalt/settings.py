@@ -29,10 +29,10 @@ INSTALLED_APPS = [
 
     'base.templatetags',
 
+    'channels'
+
     #'ckeditor',
     #'ckeditor_uploader',
-
-
 
 ]
 
@@ -46,6 +46,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'base.middlewares.AjaxMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'dreamalt.urls'
@@ -70,6 +71,13 @@ TEMPLATES = [
 
 
 WSGI_APPLICATION = 'dreamalt.wsgi.application'
+ASGI_APPLICATION = 'dreamalt.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 
 # Database
@@ -118,7 +126,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [ BASE_DIR / "static" ] 
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
 MEDIA_URL = '/media/'

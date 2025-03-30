@@ -29,6 +29,7 @@ class ChatUserView(LoginRequiredMixin, View):
     def get(self, request, pk):
         sender = User.objects.get(pk=request.user.id)
         receiver = User.objects.get(pk=pk)
+        room_name = f"{min(sender.id, receiver.id)}_{max(sender.id, receiver.id)}"
         messages = ChatMessage.objects.filter(
             user=request.user, receiver=receiver
         ) | ChatMessage.objects.filter(
@@ -40,6 +41,7 @@ class ChatUserView(LoginRequiredMixin, View):
         'receiver': receiver,
         'messages': messages,
         'form': form,
+        'room_name': room_name,
         }
         #To avoid empty messages and bad words
         bad_words_list = ['cunt','cumbubble', 'fuck', 'f*ck', 'shit', 'piss', 'asshole', 'dickweed']

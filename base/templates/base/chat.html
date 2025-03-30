@@ -158,15 +158,15 @@
 
                     <!--Send Message-->
                     <div class="mb-4 w-100">
-                        <form method="POST" action="" enctype="multipart/form-data" >
-                            {% csrf_token %}
-                            <textarea type="text" name="message" placeholder="Send Message..." rows="2" autocomplete="off" class="form-control border-own-left border-own-right border-own-top" style="border-bottom: none; border-radius: 0%;" oninput="autoExpand(this)"></textarea>
+                        <form>
+                            <textarea id="messageInput" type="text" name="message" placeholder="Send Message..." rows="2" autocomplete="off" class="form-control border-own-left border-own-right border-own-top" style="border-bottom: none; border-radius: 0%;" oninput="autoExpand(this)"></textarea>
+                            <input type="hidden" id="receiverId" value="{{ receiver.id }}">
                             <div class="d-flex justify-content-between bg-white p-2 border-own-top border-own-left border-own-right border-own-bottom" style="border: 1px solid #CED4DA;">             
                                 <div class="input-group custom-file-button w-50">
                                     <label class="input-group-text" for="inputGroupFile">Choose Image</label>
                                     <input type="file" class="form-control" id="inputGroupFile" name="image">
                                 </div>
-                                <button type="submit" class="btn text-white bg-own-dark">Send</button>
+                                <button id="sendBtn" type="button" class="btn text-white bg-own-dark">Send</button>
                             </div>                   
                         </form>
                     </div>
@@ -188,6 +188,7 @@
 
 
 <script>
+    const currentUsername = "{{ request.user.username }}";
     function showMessages(letter) {
         var div = $("#messages");
         div.scrollTop(div.prop('scrollHeight'));
@@ -206,29 +207,49 @@
 </script>
 
 <script>
-    $(function() {
-    $('form').submit(function(event) {
-        event.preventDefault();  // prevent the form from submitting normally
-        var form_data = new FormData(this);
-        $.ajax({
-        url: '{% url "chat-user" receiver.id %}',
-        type: 'POST',
-        data: form_data,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            if (response.success) {
-            $('#message-status').text(response.success);
-            location.reload();  // refresh the page
-            } else {
-            $('#message-status').text(response.error);
-            }
-        },
-        error: function() {
-            $('#message-status').text('An error occurred.');
+    const roomName = "{{ room_name }}";
+    const chatSocket = new WebSocket(
+    'ws://' + window.location.host + '/ws/chat/' + roomName + '/'
+    );
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const isSender = data.sender === currentUsername;
+
+        const msgDiv = document.createElement('div');
+        msgDiv.className = isSender ? 'd-flex justify-content-end me-2' : 'd-flex justify-content-start ms-2';
+
+        const inner = document.createElement('div');
+        inner.className = `col-6 d-flex ${isSender ? 'justify-content-end' : 'justify-content-start'}`;
+
+        const bubble = document.createElement('div');
+        bubble.className = `${isSender ? 'bg-own-dark text-white' : 'bg-own-grey'} mb-2 talktext round`;
+
+        const p = document.createElement('p');
+        p.className = 'message-body';
+        p.textContent = data.message;
+
+        bubble.appendChild(p);
+        inner.appendChild(bubble);
+        msgDiv.appendChild(inner);
+
+        const messagesContainer = document.getElementById('messages');
+        messagesContainer.appendChild(msgDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    };
+
+    document.getElementById('sendBtn').addEventListener('click', function() {
+        const input = document.getElementById('messageInput');
+        const message = input.value.trim();
+        const receiverId = document.getElementById('receiverId').value;
+
+        if (message !== '') {
+            chatSocket.send(JSON.stringify({
+                message: message,
+                receiver_id: receiverId
+            }));
+            input.value = '';
         }
-        });
-    });
     });
 </script>
 
@@ -257,7 +278,7 @@ for (const messageElement of messagesDiv.children) {
     // get the message user
     const messageUser = messageElement.querySelector('.col-6');
     // check if the message user is the current user
-    if (messageUser.classList.contains('justify-content-end')) {
+    if (messageUser && messageUser.classList.contains('justify-content-end')) {
       const messageText = messageUser.querySelector('.message-body').textContent;
       // you can do something with the messageText here, if needed
       const messageImage = messageUser.querySelector('img');
@@ -273,7 +294,10 @@ for (const messageElement of messagesDiv.children) {
         const messageImageSrc = messageImage.getAttribute('src');
         // you can do something with the messageImageSrc here, if needed
       }
-      const messageText = messageElement.querySelector('.message-body').textContent;
+      const messageBody = messageElement.querySelector('.message-body');
+        if (messageBody) {
+        const messageText = messageBody.textContent;
+        }
       // you can do something with the messageText here, if needed
     }
   }
@@ -284,10 +308,3 @@ for (const messageElement of messagesDiv.children) {
 
 
 {% endblock content %}
-
-
-
-
-
-
-

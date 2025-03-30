@@ -107,7 +107,7 @@
             <!--Contact-->
             <div class="container-fluid aboutcontainer profile-container bg-white mb-lg-3 mb-2 pt-3">
                 <button type="button" class="link-button" data-bs-toggle="modal" data-bs-target="#ContactModal"><h5 class="">Contact</h5></button>
-                <p>Group owner: <a href="{% url 'user-profile' group.host.id %}" class="text-decoration-none text-dark">{{group.host.get_full_name}}</a></p>
+                <p>Group owner: <a href="{% url 'user-profile' group.host.id %}" class="text-decoration-none text-dark">{{ group.host.get_full_name|default:group.host.username }}</a></p>
             </div>
             <!---->
 
@@ -435,7 +435,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body" id="contactDisplay">
-            <p>Group owner: <a href="{% url 'user-profile' group.host.id %}" class="text-decoration-none text-own-dark">{{group.host.get_full_name}}</a></p>
+            <p>Group owner: <a href="{% url 'user-profile' group.host.id %}" class="text-decoration-none text-own-dark">{{ group.host.get_full_name|default:group.host.username }}</a></p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
