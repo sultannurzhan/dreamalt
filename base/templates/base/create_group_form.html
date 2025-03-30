@@ -50,7 +50,27 @@
                         <input id="image-upload" type="file" name="image" class="form-control w-50">
                       </label>     
                       {% csrf_token %}
-                      {{ form.as_p }}
+                      <div class="mb-3">
+                          <label for="id_title">Title</label>
+                          {{ form.title }}
+                      </div>
+                      <div class="mb-3">
+                          <label for="id_topic">Topic</label>
+                          <input list="topic-list" id="id_topic" name="topic" class="form-control">
+                          <datalist id="topic-list">
+                            {% for topic in topics %}
+                              <option value="{{ topic.name }}">
+                            {% endfor %}
+                          </datalist>
+                      </div>
+                      <div class="mb-3">
+                          <label for="id_description">Description</label>
+                          {{ form.description }}
+                      </div>
+                      <div class="mb-3">
+                          <label for="id_group_type">Group Type</label>
+                          {{ form.group_type }}
+                      </div>
                       <br>
                       <div class="btn-group">
                           <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-dark">Go Back</a>
@@ -77,6 +97,21 @@
               var newImageUrl = URL.createObjectURL(newImageFile);
               // Update the current image element with the new image URL
               $('#current-image').attr('src', newImageUrl);
+          }
+      });
+
+      $('#id_topic').on('input', function() {
+          const query = $(this).val();
+          if (query.length > 1) {
+              fetch(`/suggest-topics/?term=${encodeURIComponent(query)}`)
+                  .then(response => response.json())
+                  .then(data => {
+                      let dataList = $('#topic-list');
+                      dataList.empty();
+                      data.forEach(topic => {
+                          dataList.append(`<option value="${topic}">`);
+                      });
+                  });
           }
       });
   });
@@ -119,3 +154,6 @@ document.querySelector('input[type="file"]').addEventListener('change', function
 </script>
 -->
 
+</file>
+</file>
+</file>

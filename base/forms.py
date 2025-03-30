@@ -42,10 +42,15 @@ class RegisterUserForm(UserCreationForm):
     """
 
 
+
+
+
+
+
 class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
-        fields = ('topic', 'title', 'group_type', 'description')
+        fields = ('title', 'group_type', 'description')
 
         
         widgets = {

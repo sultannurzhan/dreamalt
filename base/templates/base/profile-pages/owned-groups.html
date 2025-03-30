@@ -104,7 +104,7 @@
               <div class="d-flex justify-content-lg-end ms-4 text-center py-1 justify-content-md-around {% if request.user.is_authenticated %} profile-info {% else %} profile-info-addons {% endif %}">
                 <a href="{% url 'owned-groups' user.id %}" style="text-decoration: None;" class="text-dark">
                   <div class="link-hover-grey border-radius-10 p-3">
-                    <p class="mb-1 h5">{{all_groups|length}}</p>
+                    <p class="mb-1 h5">{{followed_groups|length}}</p>
                     <p class="small text-muted mb-0">Groups</p>
                   </div>
                 </a>

@@ -144,7 +144,7 @@
                     {% if request.user.is_authenticated %}
                     {% if request.user == group.host %}
                     <div class="comment-form mb-4">
-                        <form method="POST" action="" enctype="multipart/form-data">
+                        <form method="POST" action="{% url 'add-post' group.id %}" enctype="multipart/form-data">
                             {% csrf_token %}
                             <textarea type="text" name="body" placeholder="Write something..." rows="3" autocomplete="off" class="form-control" style="border-bottom: none; border-bottom-left-radius: 0%; border-bottom-right-radius: 0%;" oninput="autoExpand(this)"></textarea>
                             <img id="current-image" src="" class="img-fluid" style="width: 100%; height: 100%; display: none; border: 1px solid #CED4DA; border-bottom: none;">
@@ -160,7 +160,7 @@
                     
                     {% elif request.user != group.host and group.group_type == "public" and is_following%}
                     <div class="comment-form mb-4">
-                        <form method="POST" action="" enctype="multipart/form-data">
+                        <form method="POST" action="{% url 'add-post' group.id %}" enctype="multipart/form-data">
                             {% csrf_token %}
                             <textarea type="text" name="body" placeholder="Write something..." rows="3" autocomplete="off" class="form-control" style="border-bottom: none; border-bottom-left-radius: 0%; border-bottom-right-radius: 0%;" oninput="autoExpand(this)"></textarea>
                             <img id="current-image" src="" class="img-fluid" style="width: 100%; height: 100%; display: none; border: 1px solid #CED4DA; border-bottom: none;">
